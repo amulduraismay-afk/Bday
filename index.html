@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Birthday Surprise</title>
+
+<link href="https://fonts.cdnfonts.com/css/selima" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    font-family: 'Selima', cursive;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+}
+
+/* Instruction */
+#instruction {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    font-size: 26px;
+}
+
+/* Hearts */
+.heart {
+    position: absolute;
+    font-size: 35px;
+    cursor: pointer;
+    animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
+}
+
+/* Password */
+#passwordBox {
+    display: none;
+    position: absolute;
+    top: 40%;
+    width: 100%;
+}
+
+/* Center text */
+#textBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Lines */
+.line {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.small {
+    font-size: 24px;
+}
+
+.big {
+    font-size: 42px;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* Final message */
+#finalMessage {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+}
+
+/* Letter */
+#letter {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 20px;
+    width: 70%;
+    font-size: 22px;
+    animation: pop 0.8s forwards;
+}
+
+@keyframes pop {
+    to { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Fireworks */
+.fire {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: explode 1s linear forwards;
+}
+
+@keyframes explode {
+    to {
+        transform: translate(var(--x), var(--y));
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="instruction">💖 Tap any 3 hearts 💖</div>
+
+<div id="passwordBox">
+    <h2>🔐 Enter Secret Password</h2>
+    <input type="password" id="pass">
+    <br><br>
+    <button onclick="checkPassword()">Unlock</button>
+</div>
+
+<div id="textBox"></div>
+
+<div id="finalMessage" onclick="showLetter()">
+🎉 Happy Birthday Ammu 💗 🎉<br>👉 Tap me
+</div>
+
+<div id="letter">
+💌 My Dear Ammu,<br><br>
+You are my happiness 💖<br>
+You are my world 🌍<br>
+I’m lucky to have you 💕<br><br>
+Happy Birthday 💗🎉
+</div>
+
+<audio id="music" loop>
+<source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3">
+</audio>
+
+<script>
+let count = 0;
+
+// Hearts
+setInterval(() => {
+    let heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❣️";
+    heart.style.left = Math.random()*100 + "vw";
+
+    heart.onclick = function(){
+        this.remove();
+        count++;
+
+        if(navigator.vibrate) navigator.vibrate(100);
+
+        if(count === 3){
+            document.getElementById("instruction").style.display="none";
+            document.getElementById("passwordBox").style.display="block";
+        }
+    };
+
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+}, 500);
+
+// Password
+function checkPassword(){
+    let input = document.getElementById("pass").value;
+
+    if(input === "lakjitakathir"){
+        document.getElementById("passwordBox").style.display="none";
+        startText();
+    } else {
+        alert("Wrong password 😜");
+    }
+}
+
+// Line-by-line center text
+function startText(){
+    document.getElementById("music").play();
+
+    let lines = [
+        "Hey Ammu 💖",
+        "You are my world 🌍",
+        "You mean everything 💕",
+        "Today is special...",
+        "Because it's YOUR day 🎉"
+    ];
+
+    let i = 0;
+
+    function showLine(){
+        if(i < lines.length){
+            let div = document.createElement("div");
+            div.className = "line " + (i % 2 === 0 ? "small" : "big");
+            div.innerHTML = lines[i];
+
+            document.getElementById("textBox").innerHTML = "";
+            document.getElementById("textBox").appendChild(div);
+
+            i++;
+            setTimeout(showLine, 1500);
+        } else {
+            showFinal();
+        }
+    }
+
+    showLine();
+}
+
+// Final fireworks
+function showFinal(){
+    document.getElementById("textBox").style.display="none";
+    document.getElementById("finalMessage").style.display="block";
+
+    for(let i=0;i<6;i++){
+        setTimeout(firework, i*400);
+    }
+}
+
+function firework(){
+    let x = Math.random()*window.innerWidth;
+    let y = Math.random()*window.innerHeight/2;
+
+    for(let i=0;i<30;i++){
+        let f = document.createElement("div");
+        f.className="fire";
+
+        let angle = Math.random()*2*Math.PI;
+        let radius = Math.random()*100;
+
+        f.style.left = x+"px";
+        f.style.top = y+"px";
+
+        f.style.setProperty('--x', Math.cos(angle)*radius+"px");
+        f.style.setProperty('--y', Math.sin(angle)*radius+"px");
+
+        document.body.appendChild(f);
+
+        setTimeout(()=>f.remove(),1000);
+    }
+}
+
+// Letter
+function showLetter(){
+    document.getElementById("letter").style.display="block";
+}
+</script>
+
+</body>
+</html>
+</html>
